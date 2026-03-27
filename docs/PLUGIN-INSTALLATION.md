@@ -18,6 +18,7 @@ claude --plugin-dir .
 ```
 
 Skills are immediately available:
+
 - `/pull-notion`
 - `/push-notion`
 - `/notion-status`
@@ -74,7 +75,7 @@ After installation, verify the plugin is loaded:
 
 The plugin includes:
 
-```
+```text
 notion-sync/
 ├── .claude-plugin/
 │   ├── plugin.json          # Plugin manifest
@@ -109,21 +110,21 @@ See [SETUP.md](./SETUP.md) for detailed Notion MCP configuration.
 
 ## Updating the Plugin
 
-### If using --plugin-dir or symlink:
+### If using --plugin-dir or symlink
 
 ```bash
 cd /path/to/notion-sync
 git pull
 ```
 
-### If installed to plugins directory:
+### If installed to plugins directory
 
 ```bash
 cd ~/.claude/plugins/notion-sync
 git pull
 ```
 
-### If using marketplace (future):
+### If using marketplace (future)
 
 ```bash
 /plugin update notion-sync
@@ -131,13 +132,13 @@ git pull
 
 ## Uninstalling
 
-### Remove from plugins directory:
+### Remove from plugins directory
 
 ```bash
 rm -rf ~/.claude/plugins/notion-sync
 ```
 
-### Or use the old setup script uninstall:
+### Or use the old setup script uninstall
 
 ```bash
 # Remove symlinked skills
@@ -187,7 +188,7 @@ To distribute this plugin to your team via a custom marketplace:
 }
 ```
 
-4. **Team members can now install:**
+1. **Team members can now install:**
 
 ```bash
 /plugin install notion-sync
@@ -207,6 +208,7 @@ To submit this plugin to the official Anthropic marketplace:
    - ✅ Working skills
 
 Once approved, users can install with:
+
 ```bash
 /plugin install notion-sync
 ```

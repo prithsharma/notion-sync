@@ -34,6 +34,7 @@ git clone https://github.com/prithsharma/notion-sync.git ~/.claude/plugins/notio
 ```
 
 Skills will be automatically available:
+
 - `/pull-notion`
 - `/push-notion`
 - `/notion-status`
@@ -87,6 +88,7 @@ cd notion-sync
 ```
 
 **What happens:**
+
 - Creates local markdown file with frontmatter
 - Preserves rich Notion blocks (toggles, callouts, tables)
 - Updates `.notion-sync/manifest.json` with mapping
@@ -103,6 +105,7 @@ cd notion-sync
 ```
 
 **First-time push** (local file → new Notion page):
+
 ```bash
 # Create markdown file
 echo "# My Doc\nContent" > docs/new.md
@@ -122,6 +125,7 @@ EOF
 ```
 
 **What happens:**
+
 - Detects if both local and Notion changed (conflict detection)
 - Shows diff if conflicts found
 - Updates/creates Notion page
@@ -142,7 +146,8 @@ EOF
 ```
 
 **Output:**
-```
+
+```text
 Notion Sync Status
 ==================
 
@@ -158,7 +163,7 @@ Summary: 2 synced, 1 modified, 1 not found
 
 ### Architecture
 
-```
+```text
 ┌─────────────────────┐
 │  Local Markdown     │
 │  (your repo)        │
@@ -187,7 +192,7 @@ Summary: 2 synced, 1 modified, 1 not found
 
 Each project using Notion sync has:
 
-```
+```text
 your-project/
 ├── docs/
 │   └── *.md              # Markdown files with frontmatter
@@ -199,6 +204,7 @@ your-project/
 ```
 
 **Manifest** tracks which local files sync to which Notion pages:
+
 ```json
 {
   "files": {
@@ -214,6 +220,7 @@ your-project/
 ```
 
 **Config** stores project defaults:
+
 ```json
 {
   "default_parent": "Team Docs",
@@ -248,13 +255,14 @@ Three hashes track state for 3-way merge:
 **Scenarios:**
 
 | Local changed? | Notion changed? | Result |
-|---------------|-----------------|--------|
+| --------------- | --------------- | ------ |
 | ❌ | ❌ | ✓ Synced |
 | ✅ | ❌ | ⚠ Local modified (safe to push) |
 | ❌ | ✅ | ⚠ Notion modified (pull to update) |
 | ✅ | ✅ | ⚡ **Conflict** (both changed) |
 
 When conflict detected:
+
 1. Show diff of both changes
 2. Offer options: use local, use Notion, merge manually, cancel
 3. For merge: edit local file to combine, re-push
@@ -263,9 +271,10 @@ When conflict detected:
 
 Notion-flavored Markdown preserves rich formatting:
 
-### Editable as-is:
+### Editable as-is
 
 **Toggles:**
+
 ```markdown
 <details>
 <summary>Click to expand</summary>
@@ -274,6 +283,7 @@ Content inside toggle
 ```
 
 **Callouts:**
+
 ```markdown
 <callout icon="💡">
 This is a callout with an icon
@@ -281,6 +291,7 @@ This is a callout with an icon
 ```
 
 **Tables:**
+
 ```markdown
 <table>
 <tr>
@@ -291,6 +302,7 @@ This is a callout with an icon
 ```
 
 **Columns:**
+
 ```markdown
 <columns>
   <column>Left column</column>
@@ -299,13 +311,14 @@ This is a callout with an icon
 ```
 
 **Code blocks:**
+
 ````markdown
 ```javascript
 const example = "preserved exactly";
 ```
 ````
 
-### Complex blocks:
+### Complex blocks
 
 - Synced blocks - preserved
 - Meeting notes with transcripts - transcript is read-only
@@ -336,9 +349,11 @@ git push
 ### Scenario 2: PM edits on Notion
 
 **PM:**
+
 - Edits page directly on Notion
 
 **Developer:**
+
 ```bash
 # Pull latest before editing
 /pull-notion <url> docs/api.md
@@ -416,6 +431,7 @@ git commit -m "Setup Notion sync"
 ### Per-project config
 
 `.notion-sync/config.json`:
+
 ```json
 {
   "default_parent": "Team Docs",
@@ -424,12 +440,14 @@ git commit -m "Setup Notion sync"
 ```
 
 Options:
+
 - `default_parent`: Default Notion parent for new pages (null, page title, or URL)
 - `conflict_strategy`: `ask`, `local`, `notion`, or `newer`
 
 ### Per-user overrides
 
 `.notion-sync/config.local.json` (not committed):
+
 ```json
 {
   "default_parent": "My Personal Docs",
@@ -442,6 +460,7 @@ Options:
 ### Custom parent for each file
 
 In frontmatter:
+
 ```yaml
 ---
 notion_parent: "Engineering/Backend"
@@ -449,6 +468,7 @@ notion_parent: "Engineering/Backend"
 ```
 
 Or use exact page URL:
+
 ```yaml
 ---
 notion_parent: "https://notion.so/workspace/Backend-abc123"
