@@ -35,6 +35,7 @@ Pull a Notion page to a local markdown file for editing.
      - Cancel
 
 5. **Create frontmatter:**
+
    ```yaml
    ---
    notion_id: <page_id>
@@ -58,6 +59,7 @@ Pull a Notion page to a local markdown file for editing.
 8. **Update manifest:**
    - Read `~/.notion-sync/manifest.json`
    - Add/update entry:
+
      ```json
      {
        "files": {
@@ -71,7 +73,9 @@ Pull a Notion page to a local markdown file for editing.
        }
      }
      ```
+
    - Use Node.js to compute SHA-256 hashes:
+
      ```bash
      echo -n "content" | openssl dgst -sha256 -binary | xxd -p -c 256
      ```
@@ -91,7 +95,7 @@ Pull a Notion page to a local markdown file for editing.
 
 ## Example usage
 
-```
+```bash
 /pull-notion https://notion.so/workspace/Page-abc123
 /pull-notion abc123def456 docs/api-reference.md
 ```

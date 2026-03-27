@@ -31,7 +31,8 @@ Show sync status for all files tracked in the Notion sync manifest.
      - **not_synced**: File exists but not in manifest
 
 3. **Status determination logic:**
-   ```
+
+   ```text
    local_hash = hash(current file content)
    manifest_local_hash = entry.local_hash
    manifest_notion_hash_at_sync = entry.notion_hash_at_sync
@@ -50,7 +51,8 @@ Show sync status for all files tracked in the Notion sync manifest.
 4. **Display status:**
 
    **Compact view (default):**
-   ```
+
+   ```text
    Notion Sync Status
    ==================
 
@@ -66,7 +68,8 @@ Show sync status for all files tracked in the Notion sync manifest.
    ```
 
    **Verbose view (`--verbose`):**
-   ```
+
+   ```text
    Notion Sync Status
    ==================
 
@@ -116,7 +119,7 @@ Show sync status for all files tracked in the Notion sync manifest.
 
 ## Example usage
 
-```
+```bash
 /notion-status
 /notion-status docs/api-reference.md
 /notion-status --verbose

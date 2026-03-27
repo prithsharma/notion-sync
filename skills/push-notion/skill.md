@@ -76,6 +76,7 @@ Push a local markdown file to Notion, creating or updating the page.
 8. **Update manifest:**
    - Compute hash of pushed content
    - Update entry:
+
      ```json
      {
        "notion_id": "<page_id>",
@@ -85,6 +86,7 @@ Push a local markdown file to Notion, creating or updating the page.
        "notion_hash_at_sync": "<sha256 of notion content after push>"
      }
      ```
+
    - All three hashes should now match (no conflicts)
 
 9. **Confirm:**
@@ -109,6 +111,7 @@ When a conflict is detected:
 ## Parent resolution
 
 When `notion_parent` is specified in frontmatter:
+
 - Use `mcp__notion__notion-search` to find parent by title
 - If multiple matches, show list and ask user to pick
 - If no match, warn and create as private page
@@ -126,7 +129,7 @@ When `notion_parent` is specified in frontmatter:
 
 ## Example usage
 
-```
+```bash
 /push-notion docs/api-reference.md
 /push-notion docs/api-reference.md --force
 ```
