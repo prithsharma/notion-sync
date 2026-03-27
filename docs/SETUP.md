@@ -46,7 +46,7 @@ git --version
 
 ```bash
 # 1. Clone this repository
-git clone https://github.com/yourusername/notion-sync.git
+git clone https://github.com/prithsharma/notion-sync.git
 cd notion-sync
 
 # 2. Run setup script
@@ -70,7 +70,7 @@ If the setup script doesn't work:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/notion-sync.git
+git clone https://github.com/prithsharma/notion-sync.git
 
 # 2. Manually symlink skills
 cd notion-sync
@@ -451,7 +451,7 @@ Or manually update hashes in manifest (advanced).
 
 ## Getting Help
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/notion-sync/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/notion-sync/discussions)
+- **Issues**: [GitHub Issues](https://github.com/prithsharma/notion-sync/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/prithsharma/notion-sync/discussions)
 - **Claude Code docs**: [claude.ai/code/docs](https://claude.ai/code/docs)
 - **Notion MCP docs**: [@notionhq/notion-mcp-server](https://github.com/notionhq/notion-mcp-server)

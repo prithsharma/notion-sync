@@ -11,7 +11,7 @@ Be respectful, inclusive, and constructive in all interactions.
 ### Reporting Bugs
 
 **Before submitting:**
-1. Check [existing issues](https://github.com/yourusername/notion-sync/issues)
+1. Check [existing issues](https://github.com/prithsharma/notion-sync/issues)
 2. Verify you're using the latest version
 3. Test with a minimal reproduction case
 
@@ -28,7 +28,7 @@ Be respectful, inclusive, and constructive in all interactions.
 ### Suggesting Features
 
 **Before submitting:**
-1. Check [existing discussions](https://github.com/yourusername/notion-sync/discussions)
+1. Check [existing discussions](https://github.com/prithsharma/notion-sync/discussions)
 2. Consider if it fits the project scope (local-first sync)
 
 **When submitting:**
@@ -45,9 +45,9 @@ Be respectful, inclusive, and constructive in all interactions.
 
 1. **Fork and clone**
    ```bash
-   git clone https://github.com/yourusername/notion-sync.git
+   git clone https://github.com/prithsharma/notion-sync.git
    cd notion-sync
-   git remote add upstream https://github.com/original/notion-sync.git
+   git remote add upstream https://github.com/prithsharma/notion-sync.git
    ```
 
 2. **Create a feature branch**
@@ -108,7 +108,7 @@ Be respectful, inclusive, and constructive in all interactions.
 
 ```bash
 # Clone your fork
-git clone https://github.com/yourusername/notion-sync.git
+git clone https://github.com/prithsharma/notion-sync.git
 cd notion-sync
 
 # Link skills for testing
@@ -256,9 +256,9 @@ fi
 
 ## Questions?
 
-- **General questions**: [GitHub Discussions](https://github.com/yourusername/notion-sync/discussions)
-- **Bug reports**: [GitHub Issues](https://github.com/yourusername/notion-sync/issues)
-- **Feature requests**: [GitHub Discussions](https://github.com/yourusername/notion-sync/discussions/categories/ideas)
+- **General questions**: [GitHub Discussions](https://github.com/prithsharma/notion-sync/discussions)
+- **Bug reports**: [GitHub Issues](https://github.com/prithsharma/notion-sync/issues)
+- **Feature requests**: [GitHub Discussions](https://github.com/prithsharma/notion-sync/discussions/categories/ideas)
 
 ## License
 

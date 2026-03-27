@@ -25,7 +25,7 @@ A bidirectional sync system that lets you edit Notion pages as markdown files in
 
 1. **Clone this repository:**
    ```bash
-   git clone https://github.com/yourusername/notion-sync.git
+   git clone https://github.com/prithsharma/notion-sync.git
    cd notion-sync
    ```
 
@@ -466,7 +466,7 @@ Contributions welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ```bash
 # Fork and clone
-git clone https://github.com/yourusername/notion-sync.git
+git clone https://github.com/prithsharma/notion-sync.git
 cd notion-sync
 
 # Link skills for testing

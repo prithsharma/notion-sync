@@ -10,16 +10,16 @@
     "local-first",
     "bidirectional-sync"
   ],
-  "homepage": "https://github.com/yourusername/notion-sync#readme",
+  "homepage": "https://github.com/prithsharma/notion-sync#readme",
   "bugs": {
-    "url": "https://github.com/yourusername/notion-sync/issues"
+    "url": "https://github.com/prithsharma/notion-sync/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/notion-sync.git"
+    "url": "git+https://github.com/prithsharma/notion-sync.git"
   },
   "license": "MIT",
-  "author": "Your Name <your.email@example.com>",
+  "author": "Prithvi Sharma <prithvi.sharma@devrev.ai>",
   "main": "lib/sync-lib.js",
   "directories": {
     "doc": "docs",
