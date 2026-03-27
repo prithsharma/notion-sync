@@ -1,0 +1,50 @@
+{
+  "name": "notion-sync-claude",
+  "version": "0.1.0",
+  "description": "Local-first Notion sync for Claude Code. Edit markdown locally, sync to Notion when ready.",
+  "keywords": [
+    "notion",
+    "sync",
+    "markdown",
+    "claude-code",
+    "local-first",
+    "bidirectional-sync"
+  ],
+  "homepage": "https://github.com/yourusername/notion-sync#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/notion-sync/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/notion-sync.git"
+  },
+  "license": "MIT",
+  "author": "Your Name <your.email@example.com>",
+  "main": "lib/sync-lib.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "example": "examples"
+  },
+  "files": [
+    "lib/",
+    "skills/",
+    "scripts/",
+    "docs/",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "setup": "./scripts/setup-skills.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "@anthropic/claude-code": "*"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

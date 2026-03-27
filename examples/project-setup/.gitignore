@@ -1,0 +1,5 @@
+# Notion sync cache (derived data, regenerated on pull)
+.notion-sync/blocks/
+
+# Optional: per-user config overrides
+.notion-sync/config.local.json

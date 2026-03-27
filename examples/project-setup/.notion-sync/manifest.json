@@ -1,0 +1,19 @@
+{
+  "default_database": null,
+  "files": {
+    "docs/architecture.md": {
+      "notion_id": "abc123def456",
+      "last_synced": "2026-03-28T10:30:00Z",
+      "local_hash": "a1b2c3d4e5f6...",
+      "notion_hash": "a1b2c3d4e5f6...",
+      "notion_hash_at_sync": "a1b2c3d4e5f6..."
+    },
+    "docs/api-reference.md": {
+      "notion_id": "def456abc123",
+      "last_synced": "2026-03-27T15:20:00Z",
+      "local_hash": "f6e5d4c3b2a1...",
+      "notion_hash": "f6e5d4c3b2a1...",
+      "notion_hash_at_sync": "f6e5d4c3b2a1..."
+    }
+  }
+}

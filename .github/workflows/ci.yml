@@ -1,0 +1,144 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check shell scripts
+        run: |
+          # Check bash scripts for syntax errors
+          for script in $(find . -name "*.sh"); do
+            echo "Checking $script"
+            bash -n "$script"
+          done
+
+      - name: Check markdown
+        uses: DavidAnson/markdownlint-cli2-action@v15
+        with:
+          globs: '**/*.md'
+          config: |
+            {
+              "line-length": false,
+              "no-inline-html": false
+            }
+
+  validate-structure:
+    name: Validate Structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files
+        run: |
+          # Check that all required files exist
+          required_files=(
+            "README.md"
+            "LICENSE"
+            "CONTRIBUTING.md"
+            "package.json"
+            ".gitignore"
+            "lib/sync-lib.js"
+            "skills/pull-notion/skill.md"
+            "skills/push-notion/skill.md"
+            "skills/notion-status/skill.md"
+            "scripts/setup-skills.sh"
+            "docs/SETUP.md"
+            "docs/per-project-state.md"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Error: Required file missing: $file"
+              exit 1
+            fi
+          done
+
+          echo "✓ All required files present"
+
+      - name: Validate JSON files
+        run: |
+          # Check that JSON files are valid
+          for json_file in $(find . -name "*.json" -not -path "./node_modules/*"); do
+            echo "Validating $json_file"
+            if ! jq empty "$json_file" 2>/dev/null; then
+              echo "Error: Invalid JSON in $json_file"
+              exit 1
+            fi
+          done
+
+          echo "✓ All JSON files valid"
+
+  test-setup:
+    name: Test Setup Script
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create mock skills directory
+        run: |
+          mkdir -p ~/.claude/skills
+
+      - name: Test setup script (dry run)
+        run: |
+          # Check script is executable
+          if [ ! -x scripts/setup-skills.sh ]; then
+            chmod +x scripts/setup-skills.sh
+          fi
+
+          # Run setup
+          ./scripts/setup-skills.sh
+
+          # Verify symlinks created
+          for skill in pull-notion push-notion notion-status; do
+            if [ ! -L ~/.claude/skills/$skill ]; then
+              echo "Error: Skill symlink not created: $skill"
+              exit 1
+            fi
+          done
+
+          echo "✓ Setup script works"
+
+  validate-examples:
+    name: Validate Examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check example structure
+        run: |
+          # Verify example project has correct structure
+          example_dir="examples/project-setup"
+
+          if [ ! -d "$example_dir" ]; then
+            echo "Error: Example directory not found"
+            exit 1
+          fi
+
+          required=(
+            "$example_dir/.notion-sync/manifest.json"
+            "$example_dir/.notion-sync/config.json"
+            "$example_dir/.gitignore"
+            "$example_dir/docs/architecture.md"
+            "$example_dir/README.md"
+          )
+
+          for file in "${required[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Error: Example file missing: $file"
+              exit 1
+            fi
+          done
+
+          echo "✓ Example structure valid"
