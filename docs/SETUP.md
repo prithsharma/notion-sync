@@ -7,11 +7,13 @@ Detailed installation and configuration instructions for Notion Sync.
 ### 1. Claude Code
 
 You need Claude Code installed. Available as:
+
 - **CLI**: `npm install -g @anthropic/claude-code` or download from [claude.ai/code](https://claude.ai/code)
 - **Desktop app**: Mac/Windows versions
 - **IDE extensions**: VS Code, JetBrains
 
 Check installation:
+
 ```bash
 claude --version
 ```
@@ -23,6 +25,7 @@ The Notion MCP server provides API access to your Notion workspace.
 **Check if already configured:**
 
 In Claude Code, run:
+
 ```bash
 # If these tools are available, you're good to go:
 # - mcp__notion__notion-fetch
@@ -36,6 +39,7 @@ In Claude Code, run:
 ### 3. Git (optional but recommended)
 
 For version control and team collaboration:
+
 ```bash
 git --version
 ```
@@ -56,7 +60,8 @@ cd notion-sync
 ```
 
 Open Claude Code and check:
-```
+
+```bash
 /pull-notion
 /push-notion
 /notion-status
@@ -105,11 +110,13 @@ If you don't have the Notion MCP server configured:
 ### 2. Share Pages with Integration
 
 For each page you want to sync:
+
 1. Open the page in Notion
 2. Click "..." menu → "Add connections"
 3. Select your "Claude Code Sync" integration
 
 Or share entire workspace:
+
 1. Settings → Connections
 2. Add your integration
 
@@ -150,6 +157,7 @@ Add to your Claude Code MCP configuration:
 ```
 
 Then set in your shell:
+
 ```bash
 export NOTION_API_KEY="your_token_here"
 ```
@@ -161,11 +169,13 @@ After configuring MCP, restart Claude Code to load the server.
 ### 5. Verify
 
 In Claude Code:
-```
+
+```text
 Tell me about the Notion MCP tools you have access to.
 ```
 
 Should list:
+
 - `mcp__notion__notion-fetch`
 - `mcp__notion__notion-create-pages`
 - `mcp__notion__notion-update-page`
@@ -321,7 +331,7 @@ Open the page in Notion web/desktop and confirm changes.
 
 ## Team Setup
 
-### For the first team member (setting up):
+### For the first team member (setting up)
 
 ```bash
 # 1. Set up sync in your project
@@ -338,7 +348,7 @@ git commit -m "Setup Notion sync for team docs"
 git push
 ```
 
-### For other team members (joining):
+### For other team members (joining)
 
 ```bash
 # 1. Clone repo (includes .notion-sync/)
@@ -367,6 +377,7 @@ cd ~/notion-sync
 Skills not installed correctly.
 
 **Fix:**
+
 ```bash
 cd ~/notion-sync
 ./scripts/setup-skills.sh
@@ -379,6 +390,7 @@ Restart Claude Code.
 MCP server not configured.
 
 **Fix:**
+
 1. Check `~/.claude/mcp-config.json` has notion server
 2. Verify NOTION_API_KEY is set
 3. Restart Claude Code
@@ -389,6 +401,7 @@ MCP server not configured.
 Integration not shared with page.
 
 **Fix:**
+
 1. Open page in Notion
 2. Click "..." → "Add connections"
 3. Select your integration
@@ -398,6 +411,7 @@ Integration not shared with page.
 Sync not initialized in project.
 
 **Fix:**
+
 ```bash
 mkdir -p .notion-sync/blocks
 echo '{"default_database":null,"files":{}}' > .notion-sync/manifest.json
@@ -408,6 +422,7 @@ echo '{"default_database":null,"files":{}}' > .notion-sync/manifest.json
 Claude Code may need cache refresh.
 
 **Fix:**
+
 ```bash
 # Remove old skills
 rm -rf ~/.claude/skills/pull-notion
@@ -426,6 +441,7 @@ cd ~/notion-sync
 Trying to pull a page that's tracked elsewhere.
 
 **Options:**
+
 1. Update the existing file location
 2. Create a new copy (unlink from manifest first)
 3. Use the existing synced file
@@ -435,6 +451,7 @@ Trying to pull a page that's tracked elsewhere.
 Content modified outside sync system.
 
 **Fix:**
+
 ```bash
 # Re-pull to reset
 /pull-notion <url> docs/file.md --force

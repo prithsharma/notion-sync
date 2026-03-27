@@ -5,6 +5,7 @@ Understanding the `.notion-sync/` directory and how sync state is managed.
 ## Overview
 
 Each project using Notion sync maintains state in a `.notion-sync/` directory (similar to `.git/`). This directory tracks:
+
 - Which local files map to which Notion pages
 - Content hashes for conflict detection
 - Cached rich block data
@@ -12,7 +13,7 @@ Each project using Notion sync maintains state in a `.notion-sync/` directory (s
 
 ## Directory Structure
 
-```
+```text
 .notion-sync/
 ├── manifest.json          # ✅ Commit - file→page mappings
 ├── config.json            # ✅ Commit - project defaults
@@ -55,10 +56,12 @@ Each project using Notion sync maintains state in a `.notion-sync/` directory (s
 ### Fields
 
 **Root level:**
+
 - `default_database`: Default Notion database ID (for database-backed pages, rarely used)
 - `files`: Object mapping file paths to sync entries
 
 **Per-file entry:**
+
 - `notion_id`: The Notion page ID (UUID without dashes)
 - `last_synced`: ISO 8601 timestamp of last successful sync
 - `local_hash`: SHA-256 hash of current local content (excluding frontmatter)
@@ -106,12 +109,14 @@ Three hashes enable 3-way merge conflict detection:
 ### Why Commit This?
 
 **Team benefits:**
+
 - Everyone knows which files sync to which Notion pages
 - Consistent Notion organization across team
 - PR reviews show "added sync for X doc"
 - New teammates see what's synced
 
 **Example PR:**
+
 ```diff
 + "docs/new-feature.md": {
 +   "notion_id": "xyz789",
@@ -153,6 +158,7 @@ Reviewer sees: "We're now syncing new-feature.md to Notion page xyz789"
 ### Why Commit This?
 
 Ensures consistent behavior across team. For example:
+
 - All new docs go to "Team Documentation" parent
 - Team agrees on conflict resolution strategy
 
@@ -174,6 +180,7 @@ Ensures consistent behavior across team. For example:
 Overrides `config.json` for your local environment.
 
 **Use cases:**
+
 - You want personal docs to go elsewhere
 - You prefer different conflict strategy
 - Testing/development overrides
@@ -197,7 +204,7 @@ EOF
 
 **Structure:**
 
-```
+```text
 blocks/
 ├── abc123def456.json
 └── def456abc123.json
@@ -226,6 +233,7 @@ Each file stores the raw Notion API block data for a page.
 ### When Created
 
 Automatically created when pulling a page with rich blocks:
+
 - Toggles (`<details>`)
 - Callouts (`<callout>`)
 - Complex tables
@@ -284,8 +292,10 @@ Add to your `.gitignore`:
 ```
 
 **Actions:**
+
 1. Creates `docs/new-doc.md` with frontmatter
 2. Adds entry to `manifest.json`:
+
    ```json
    {
      "notion_id": "abc123",
@@ -295,6 +305,7 @@ Add to your `.gitignore`:
      "notion_hash_at_sync": "xyz..."
    }
    ```
+
 3. If rich blocks: creates `blocks/abc123.json`
 
 **All hashes match** = clean sync baseline.
@@ -307,6 +318,7 @@ vim docs/new-doc.md
 ```
 
 **State change:**
+
 - `local_hash`: ≠ manifest (changes computed on push)
 - Other hashes: unchanged
 
@@ -319,6 +331,7 @@ vim docs/new-doc.md
 ```
 
 **Actions:**
+
 1. Compute new local_hash
 2. Fetch current Notion content, compute notion_hash
 3. Compare hashes:
@@ -327,6 +340,7 @@ vim docs/new-doc.md
 4. If conflict: show diff, ask user
 5. If no conflict: push to Notion
 6. Update manifest:
+
    ```json
    {
      "last_synced": "2026-03-28T11:45:00Z",
@@ -346,6 +360,7 @@ git pull  # Gets updated manifest
 ```
 
 **Actions:**
+
 1. Fetch from Notion
 2. Update local file
 3. Update manifest hashes
@@ -421,6 +436,7 @@ vim .notion-sync/manifest.json
 **Check order of precedence:**
 
 1. **Frontmatter** (highest priority)
+
    ```yaml
    ---
    notion_parent: "Specific Parent"
@@ -428,11 +444,13 @@ vim .notion-sync/manifest.json
    ```
 
 2. **Local config** `.notion-sync/config.local.json`
+
    ```json
    {"default_parent": "My Docs"}
    ```
 
 3. **Project config** `.notion-sync/config.json`
+
    ```json
    {"default_parent": "Team Docs"}
    ```

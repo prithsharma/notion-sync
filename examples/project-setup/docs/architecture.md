@@ -6,8 +6,6 @@ has_rich_blocks: false
 last_synced: 2026-03-28T10:30:00Z
 ---
 
-# Architecture Overview
-
 This document describes our system architecture.
 
 ## Components

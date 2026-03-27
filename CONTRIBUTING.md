@@ -11,11 +11,13 @@ Be respectful, inclusive, and constructive in all interactions.
 ### Reporting Bugs
 
 **Before submitting:**
+
 1. Check [existing issues](https://github.com/prithsharma/notion-sync/issues)
 2. Verify you're using the latest version
 3. Test with a minimal reproduction case
 
 **When submitting:**
+
 - Use the bug report template
 - Include:
   - Claude Code version
@@ -28,10 +30,12 @@ Be respectful, inclusive, and constructive in all interactions.
 ### Suggesting Features
 
 **Before submitting:**
+
 1. Check [existing discussions](https://github.com/prithsharma/notion-sync/discussions)
 2. Consider if it fits the project scope (local-first sync)
 
 **When submitting:**
+
 - Use the feature request template
 - Include:
   - Clear use case
@@ -44,6 +48,7 @@ Be respectful, inclusive, and constructive in all interactions.
 **Process:**
 
 1. **Fork and clone**
+
    ```bash
    git clone https://github.com/prithsharma/notion-sync.git
    cd notion-sync
@@ -51,6 +56,7 @@ Be respectful, inclusive, and constructive in all interactions.
    ```
 
 2. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -61,6 +67,7 @@ Be respectful, inclusive, and constructive in all interactions.
    - Update documentation
 
 4. **Test locally**
+
    ```bash
    # Install skills
    ./scripts/setup-skills.sh
@@ -71,6 +78,7 @@ Be respectful, inclusive, and constructive in all interactions.
    ```
 
 5. **Commit with clear messages**
+
    ```bash
    git commit -m "Add: feature description"
    git commit -m "Fix: bug description"
@@ -78,9 +86,11 @@ Be respectful, inclusive, and constructive in all interactions.
    ```
 
 6. **Push and create PR**
+
    ```bash
    git push origin feature/your-feature-name
    ```
+
    Then open PR on GitHub.
 
 **PR Guidelines:**
@@ -122,7 +132,7 @@ cd notion-sync
 
 ### Project Structure
 
-```
+```text
 notion-sync/
 ├── lib/               # Core library code
 │   ├── sync-lib.js   # Main sync logic
@@ -143,18 +153,23 @@ notion-sync/
 
 1. Create a test Notion page
 2. Test pull:
+
    ```bash
    /pull-notion <test-url> test/file.md
    ```
+
 3. Edit test/file.md
 4. Test push:
+
    ```bash
    /push-notion test/file.md
    ```
+
 5. Verify in Notion
 6. Test conflict detection (edit both sides)
 
 **Automated tests (future):**
+
 ```bash
 npm test
 ```

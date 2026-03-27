@@ -4,7 +4,7 @@ This directory shows how to set up Notion sync in your own project.
 
 ## Structure
 
-```
+```text
 your-project/
 ├── docs/
 │   ├── architecture.md          # Synced with Notion
@@ -66,6 +66,7 @@ This file tracks which local files sync to which Notion pages. It gets auto-upda
 ```
 
 This will:
+
 - Create `docs/architecture.md` with frontmatter
 - Update `.notion-sync/manifest.json` with the mapping
 - Cache rich blocks in `.notion-sync/blocks/` if needed
@@ -83,10 +84,13 @@ When a teammate pulls your repo:
 
 1. They see which files sync to Notion (from manifest.json)
 2. They can pull latest from Notion:
+
    ```bash
    /pull-notion <notion-url> docs/architecture.md
    ```
+
 3. Or push their local changes:
+
    ```bash
    /push-notion docs/architecture.md
    ```
@@ -112,6 +116,7 @@ Your content here...
 ```
 
 This metadata:
+
 - `notion_id`: Links to specific Notion page (auto-added)
 - `notion_parent`: Where the page lives in Notion
 - `title`: Page title (can override filename)
@@ -136,9 +141,11 @@ vim docs/api.md
 ### Team: Collaborative editing
 
 **Developer A** (working on Notion):
+
 - Edits page on Notion web/desktop
 
 **Developer B** (working locally):
+
 ```bash
 # Before starting, pull latest
 /pull-notion <url> docs/api.md
@@ -154,6 +161,7 @@ vim docs/api.md
 ```
 
 If both changed:
+
 - Tool shows diff
 - Choose: use local, use Notion, or merge manually
 - For merge: edit file to combine changes, re-push
@@ -163,6 +171,7 @@ If both changed:
 ### What to sync?
 
 **Good candidates:**
+
 - API documentation
 - Architecture docs
 - Planning docs
@@ -170,6 +179,7 @@ If both changed:
 - Meeting notes
 
 **Poor candidates:**
+
 - Auto-generated docs (just regenerate)
 - Code comments (live in code)
 - Frequently-changing content (use Notion directly)
@@ -177,11 +187,13 @@ If both changed:
 ### When to sync?
 
 **Pull:**
+
 - Start of work session
 - Before making edits
 - After team meetings (if notes updated)
 
 **Push:**
+
 - End of work session
 - After major edits
 - Before PR submission (so docs are live)
@@ -197,6 +209,7 @@ notion_parent: "Engineering/Backend"
 ```
 
 Or use URL for exact placement:
+
 ```markdown
 ---
 notion_parent: "https://notion.so/workspace/Backend-abc123"
@@ -239,6 +252,7 @@ For merge: edit `docs/api.md` to combine changes, then re-push.
 ### "Permission denied" on Notion
 
 Make sure:
+
 1. Notion MCP is configured in Claude Code
 2. You have access to the page/workspace
 3. Page isn't locked/archived
