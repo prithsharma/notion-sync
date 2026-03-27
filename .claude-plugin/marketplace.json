@@ -1,0 +1,25 @@
+{
+  "name": "notion-sync-marketplace",
+  "version": "1.0.0",
+  "description": "Marketplace for Notion Sync plugin",
+  "plugins": [
+    {
+      "name": "notion-sync",
+      "displayName": "Notion Sync",
+      "description": "Local-first Notion sync. Edit markdown locally, sync to Notion when ready.",
+      "version": "0.1.0",
+      "author": "Prithvi Sharma",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/prithsharma/notion-sync.git"
+      },
+      "tags": [
+        "notion",
+        "sync",
+        "markdown",
+        "productivity"
+      ],
+      "readme": "https://raw.githubusercontent.com/prithsharma/notion-sync/main/README.md"
+    }
+  ]
+}

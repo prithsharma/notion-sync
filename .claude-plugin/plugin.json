@@ -1,0 +1,33 @@
+{
+  "name": "notion-sync",
+  "version": "0.1.0",
+  "description": "Local-first Notion sync for Claude Code. Edit markdown locally, sync to Notion when ready.",
+  "author": "Prithvi Sharma <prithvi.sharma@devrev.ai>",
+  "homepage": "https://github.com/prithsharma/notion-sync",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prithsharma/notion-sync.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "notion",
+    "sync",
+    "markdown",
+    "local-first",
+    "bidirectional-sync"
+  ],
+  "skills": [
+    "skills/pull-notion",
+    "skills/push-notion",
+    "skills/notion-status"
+  ],
+  "dependencies": {
+    "mcpServers": {
+      "notion": {
+        "required": true,
+        "description": "Notion MCP server is required for API access to your Notion workspace"
+      }
+    }
+  },
+  "readme": "README.md"
+}

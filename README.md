@@ -23,22 +23,35 @@ A bidirectional sync system that lets you edit Notion pages as markdown files in
 
 ### Installation
 
-1. **Clone this repository:**
-   ```bash
-   git clone https://github.com/prithsharma/notion-sync.git
-   cd notion-sync
-   ```
+**Method 1: Plugin Installation (Recommended)**
 
-2. **Install skills to Claude Code:**
-   ```bash
-   ./scripts/setup-skills.sh
-   ```
+```bash
+# In Claude Code, use the plugin directory flag:
+claude --plugin-dir /path/to/notion-sync
 
-3. **Verify installation:**
-   Open Claude Code and check that these commands are available:
-   - `/pull-notion`
-   - `/push-notion`
-   - `/notion-status`
+# Or for permanent installation, clone and symlink:
+git clone https://github.com/prithsharma/notion-sync.git ~/.claude/plugins/notion-sync
+```
+
+Skills will be automatically available:
+- `/pull-notion`
+- `/push-notion`
+- `/notion-status`
+
+**Method 2: Via Setup Script**
+
+```bash
+git clone https://github.com/prithsharma/notion-sync.git
+cd notion-sync
+./scripts/setup-skills.sh
+```
+
+**Method 3: Submit to Plugin Marketplace** (Coming Soon)
+
+```bash
+# Once submitted to official marketplace:
+/plugin install notion-sync
+```
 
 ### First Sync
 
