@@ -25,11 +25,6 @@ jobs:
         uses: DavidAnson/markdownlint-cli2-action@v15
         with:
           globs: '**/*.md'
-          config: |
-            {
-              "line-length": false,
-              "no-inline-html": false
-            }
 
   validate-structure:
     name: Validate Structure
