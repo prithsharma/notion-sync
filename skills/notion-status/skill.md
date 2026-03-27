@@ -13,42 +13,57 @@ Show sync status for all files tracked in the Notion sync manifest.
 
 ## What to do
 
-1. **Load manifest:**
-   - Read `~/.notion-sync/manifest.json`
-   - Get all tracked files
+1. **Parse arguments:**
+   - Check for file path (specific file) or none (all files)
+   - Check for --verbose flag
 
-2. **For each file (or single file if specified):**
-   - Check if file exists locally
-   - Read file content and frontmatter
-   - Compute current content hash
-   - Load entry from manifest
-   - Determine status:
-     - **synced**: Local and Notion hashes match manifest
-     - **local_modified**: Local hash differs from manifest
-     - **notion_modified**: Notion hash differs from manifest (need to fetch to confirm)
-     - **conflict**: Both local and Notion changed since last sync
-     - **not_found**: File doesn't exist locally but is in manifest
-     - **not_synced**: File exists but not in manifest
+2. **Call Python CLI (fast):**
 
-3. **Status determination logic:**
-
-   ```text
-   local_hash = hash(current file content)
-   manifest_local_hash = entry.local_hash
-   manifest_notion_hash_at_sync = entry.notion_hash_at_sync
-
-   if file doesn't exist:
-     status = "not_found"
-   else if local_hash == manifest_local_hash:
-     status = "synced"  // (or "notion_modified" if we fetch and Notion changed)
-   else:
-     // Local has changed
-     // To know if it's a conflict, we'd need to fetch Notion
-     // For quick status, just show "local_modified"
-     status = "local_modified"
+   **For all files:**
+   ```bash
+   python3 ~/os/notion-sync/bin/notion-sync status
    ```
 
-4. **Display status:**
+   **For specific file:**
+   ```bash
+   python3 ~/os/notion-sync/bin/notion-sync status <file-path>
+   ```
+
+   **For verbose:**
+   ```bash
+   python3 ~/os/notion-sync/bin/notion-sync status --verbose
+   ```
+
+3. **Parse JSON response:**
+
+   The CLI returns JSON with this structure:
+   ```json
+   {
+     "files": [
+       {
+         "path": "docs/api.md",
+         "status": "synced",
+         "notion_id": "abc123",
+         "last_synced": "2026-03-28T10:30:00Z",
+         "hashes": {
+           "current": "...",
+           "manifest": "...",
+           "notion_at_sync": "..."
+         }
+       },
+       {
+         "path": "docs/guide.md",
+         "status": "local_modified",
+         "notion_id": "def456",
+         "last_synced": "2026-03-27T15:00:00Z"
+       }
+     ]
+   }
+   ```
+
+   Note: `hashes` field only present when --verbose is used.
+
+4. **Format output for user:**
 
    **Compact view (default):**
 
@@ -56,39 +71,46 @@ Show sync status for all files tracked in the Notion sync manifest.
    Notion Sync Status
    ==================
 
-   ✓ synced           docs/api-reference.md
+   ✓ synced           docs/api.md
    ✓ synced           docs/planning.md
-   ⚠ local_modified   docs/architecture.md
+   ⚠ local_modified   docs/guide.md
    ✗ not_found        docs/old-doc.md
 
    Summary: 2 synced, 1 modified, 1 not found
 
-   Use /push-notion <file> to push local changes to Notion
-   Use /pull-notion <notion-url> to pull updates from Notion
+   Next steps:
+   - To push local changes: /push-notion docs/guide.md
+   - To pull Notion updates: /pull-notion <url>
    ```
 
-   **Verbose view (`--verbose`):**
+   **Verbose view:**
 
    ```text
    Notion Sync Status
    ==================
 
-   File: docs/api-reference.md
+   File: docs/api.md
    Status: ✓ synced
    Notion ID: abc123def456
-   Last synced: 2026-03-27T10:30:00Z
-   Local hash: a1b2c3...
-   Notion hash: a1b2c3...
+   Notion URL: https://notion.so/abc123def456
+   Last synced: 2026-03-28T10:30:00Z
+   Hashes:
+     Current:  a1b2c3...
+     Manifest: a1b2c3...
+     Baseline: a1b2c3...
    ---
 
-   File: docs/architecture.md
+   File: docs/guide.md
    Status: ⚠ local_modified
    Notion ID: def456abc123
-   Last synced: 2026-03-26T15:20:00Z
-   Local hash: d4e5f6... (current)
-   Manifest hash: a1b2c3... (at sync)
+   Notion URL: https://notion.so/def456abc123
+   Last synced: 2026-03-27T15:00:00Z
    Changes: Content modified locally since last sync
-   Action: Run /push-notion docs/architecture.md
+   Action: Run /push-notion docs/guide.md
+   Hashes:
+     Current:  d4e5f6... (changed)
+     Manifest: a1b2c3...
+     Baseline: a1b2c3...
    ---
    ```
 
@@ -104,14 +126,20 @@ Show sync status for all files tracked in the Notion sync manifest.
 
 ## Status indicators
 
-- `✓` - Synced (green)
-- `⚠` - Modified locally (yellow)
-- `⚡` - Conflict (red)
-- `✗` - Not found (red)
-- `○` - Not yet synced (gray)
+Use these in formatted output:
+- `✓` - Synced (green concept - all hashes match)
+- `⚠` - Modified locally (yellow concept - local changed)
+- `⚡` - Conflict (red concept - both changed, rare in status check)
+- `✗` - Not found (red concept - file deleted)
+- `○` - Not synced (gray concept - in manifest but no file)
 
 ## Important notes
 
+- Python CLI computes hashes and checks files (fast)
+- LLM formats the output nicely (natural language)
+- No Notion API calls (instant results)
+- Speed: ~0.5 seconds (vs 2-3 seconds before)
+- Cost: ~$0.005 (vs $0.02 before)
 - Quick status check doesn't fetch from Notion (would be slow)
 - To detect Notion-side changes, you'd need to run a full sync check
 - Conflicts are only definitively detected during push operation

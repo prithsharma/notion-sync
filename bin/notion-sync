@@ -1,0 +1,296 @@
+#!/usr/bin/env python3
+"""
+notion-sync CLI - Command-line interface for syncing files with Notion
+
+Usage:
+  notion-sync pull <page-id> <output-path> [--notion-token TOKEN]
+  notion-sync push <file-path> [--force] [--notion-token TOKEN] [--parent-id ID]
+  notion-sync status [file-path] [--verbose]
+  notion-sync fetch <page-id> [--notion-token TOKEN]
+  notion-sync search <query> [--notion-token TOKEN] [--type page|database]
+"""
+
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+
+# Add the parent directory to sys.path to enable imports
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+def output_json(data):
+    """Output JSON to stdout"""
+    print(json.dumps(data, indent=2))
+
+def output_error(message, error_type="Error", status_code=None):
+    """Output error as JSON and exit with code 1"""
+    error_data = {
+        "error": message,
+        "type": error_type
+    }
+    if status_code:
+        error_data["status_code"] = status_code
+    output_json(error_data)
+    sys.exit(1)
+
+def get_notion_token(args):
+    """Get Notion API token from args or environment"""
+    token = getattr(args, 'notion_token', None)
+    if not token:
+        token = os.environ.get('NOTION_API_KEY')
+    if not token:
+        output_error(
+            "Notion API token required. Provide via --notion-token or NOTION_API_KEY env var",
+            "AuthenticationError"
+        )
+    return token
+
+def cmd_pull(args):
+    """Pull a Notion page to a local file"""
+    try:
+        from lib.notion_sync import NotionSync
+
+        token = get_notion_token(args)
+        sync = NotionSync(token)
+
+        result = sync.pull(args.page_id, args.output_path)
+
+        output_json({
+            "success": True,
+            "operation": "pull",
+            "file_path": result.get("file_path"),
+            "notion_id": result.get("notion_id"),
+            "title": result.get("title"),
+            "metadata": result.get("metadata", {})
+        })
+
+    except ImportError:
+        # Placeholder when NotionSync doesn't exist yet
+        output_json({
+            "success": True,
+            "operation": "pull",
+            "status": "not_yet_implemented",
+            "page_id": args.page_id,
+            "output_path": args.output_path,
+            "message": "NotionSync class not yet implemented"
+        })
+    except Exception as e:
+        output_error(str(e), type(e).__name__)
+
+def cmd_push(args):
+    """Push a local file to Notion"""
+    try:
+        from lib.notion_sync import NotionSync
+
+        token = get_notion_token(args)
+        sync = NotionSync(token)
+
+        result = sync.push(
+            args.file_path,
+            force=args.force,
+            parent_id=args.parent_id
+        )
+
+        output_json({
+            "success": True,
+            "operation": "push",
+            "file_path": result.get("file_path"),
+            "notion_id": result.get("notion_id"),
+            "notion_url": result.get("notion_url"),
+            "action": result.get("action"),  # "created" or "updated"
+            "metadata": result.get("metadata", {})
+        })
+
+    except ImportError:
+        # Placeholder when NotionSync doesn't exist yet
+        output_json({
+            "success": True,
+            "operation": "push",
+            "status": "not_yet_implemented",
+            "file_path": args.file_path,
+            "force": args.force,
+            "parent_id": args.parent_id,
+            "message": "NotionSync class not yet implemented"
+        })
+    except Exception as e:
+        output_error(str(e), type(e).__name__)
+
+def cmd_status(args):
+    """Check sync status of a file"""
+    try:
+        from lib.notion_sync import NotionSync
+
+        token = get_notion_token(args)
+        sync = NotionSync(token)
+
+        result = sync.status(args.file_path, verbose=args.verbose)
+
+        output_json({
+            "success": True,
+            "operation": "status",
+            "file_path": result.get("file_path"),
+            "notion_id": result.get("notion_id"),
+            "sync_state": result.get("sync_state"),  # "synced", "local_changes", "remote_changes", "conflict", "not_synced"
+            "last_sync": result.get("last_sync"),
+            "details": result.get("details", {}) if args.verbose else None
+        })
+
+    except ImportError:
+        # Placeholder when NotionSync doesn't exist yet
+        output_json({
+            "success": True,
+            "operation": "status",
+            "status": "not_yet_implemented",
+            "file_path": args.file_path if hasattr(args, 'file_path') and args.file_path else None,
+            "verbose": args.verbose,
+            "message": "NotionSync class not yet implemented"
+        })
+    except Exception as e:
+        output_error(str(e), type(e).__name__)
+
+def cmd_fetch(args):
+    """Fetch Notion page metadata without saving"""
+    try:
+        from lib.notion_sync import NotionSync
+
+        token = get_notion_token(args)
+        sync = NotionSync(token)
+
+        result = sync.fetch(args.page_id)
+
+        output_json({
+            "success": True,
+            "operation": "fetch",
+            "notion_id": result.get("notion_id"),
+            "title": result.get("title"),
+            "url": result.get("url"),
+            "last_edited": result.get("last_edited"),
+            "properties": result.get("properties", {}),
+            "metadata": result.get("metadata", {})
+        })
+
+    except ImportError:
+        # Placeholder when NotionSync doesn't exist yet
+        output_json({
+            "success": True,
+            "operation": "fetch",
+            "status": "not_yet_implemented",
+            "page_id": args.page_id,
+            "message": "NotionSync class not yet implemented"
+        })
+    except Exception as e:
+        output_error(str(e), type(e).__name__)
+
+def cmd_search(args):
+    """Search Notion workspace"""
+    try:
+        from lib.notion_sync import NotionSync
+
+        token = get_notion_token(args)
+        sync = NotionSync(token)
+
+        result = sync.search(args.query, filter_type=args.type)
+
+        output_json({
+            "success": True,
+            "operation": "search",
+            "query": args.query,
+            "filter_type": args.type,
+            "results": result.get("results", []),
+            "count": result.get("count", 0)
+        })
+
+    except ImportError:
+        # Placeholder when NotionSync doesn't exist yet
+        output_json({
+            "success": True,
+            "operation": "search",
+            "status": "not_yet_implemented",
+            "query": args.query,
+            "filter_type": args.type,
+            "message": "NotionSync class not yet implemented"
+        })
+    except Exception as e:
+        output_error(str(e), type(e).__name__)
+
+def create_parser():
+    """Create argument parser"""
+    parser = argparse.ArgumentParser(
+        description='Sync files with Notion',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Pull a Notion page to a local file
+  notion-sync pull abc123 docs/requirements.md
+
+  # Push a local file to Notion
+  notion-sync push docs/requirements.md --parent-id xyz789
+
+  # Check sync status
+  notion-sync status docs/requirements.md
+
+  # Fetch page metadata
+  notion-sync fetch abc123
+
+  # Search Notion workspace
+  notion-sync search "product requirements" --type page
+"""
+    )
+
+    subparsers = parser.add_subparsers(dest='command', help='Command to execute', required=True)
+
+    # Pull command
+    pull_parser = subparsers.add_parser('pull', help='Pull a Notion page to a local file')
+    pull_parser.add_argument('page_id', help='Notion page ID')
+    pull_parser.add_argument('output_path', help='Local file path to save content')
+    pull_parser.add_argument('--notion-token', help='Notion API token (or use NOTION_API_KEY env var)')
+    pull_parser.set_defaults(func=cmd_pull)
+
+    # Push command
+    push_parser = subparsers.add_parser('push', help='Push a local file to Notion')
+    push_parser.add_argument('file_path', help='Local file path to push')
+    push_parser.add_argument('--force', action='store_true', help='Force push even if conflicts exist')
+    push_parser.add_argument('--notion-token', help='Notion API token (or use NOTION_API_KEY env var)')
+    push_parser.add_argument('--parent-id', help='Parent page ID for new pages')
+    push_parser.set_defaults(func=cmd_push)
+
+    # Status command
+    status_parser = subparsers.add_parser('status', help='Check sync status of a file')
+    status_parser.add_argument('file_path', nargs='?', help='Local file path (optional, checks all if omitted)')
+    status_parser.add_argument('--verbose', action='store_true', help='Show detailed status information')
+    status_parser.add_argument('--notion-token', help='Notion API token (or use NOTION_API_KEY env var)')
+    status_parser.set_defaults(func=cmd_status)
+
+    # Fetch command
+    fetch_parser = subparsers.add_parser('fetch', help='Fetch Notion page metadata without saving')
+    fetch_parser.add_argument('page_id', help='Notion page ID')
+    fetch_parser.add_argument('--notion-token', help='Notion API token (or use NOTION_API_KEY env var)')
+    fetch_parser.set_defaults(func=cmd_fetch)
+
+    # Search command
+    search_parser = subparsers.add_parser('search', help='Search Notion workspace')
+    search_parser.add_argument('query', help='Search query')
+    search_parser.add_argument('--notion-token', help='Notion API token (or use NOTION_API_KEY env var)')
+    search_parser.add_argument('--type', choices=['page', 'database'], help='Filter by object type')
+    search_parser.set_defaults(func=cmd_search)
+
+    return parser
+
+def main():
+    """Main entry point"""
+    parser = create_parser()
+    args = parser.parse_args()
+
+    # Execute the command
+    args.func(args)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        output_error("Operation cancelled by user", "InterruptedError")
+    except Exception as e:
+        output_error(f"Unexpected error: {str(e)}", type(e).__name__)

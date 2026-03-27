@@ -13,89 +13,118 @@ Pull a Notion page to a local markdown file for editing.
 
 ## What to do
 
-1. **Parse arguments:**
-   - Extract page ID from URL or use raw ID
-   - Determine output path (use provided path or generate from page title)
+1. **Parse arguments using LLM** (natural language understanding):
+   - Extract Notion page identifier from user input:
+     - URL format: `https://notion.so/workspace/Page-abc123` → extract `abc123`
+     - URL with dashes: `https://notion.so/workspace/Page-Title-abc123def456` → extract `abc123def456`
+     - UUID format: `abc123de-f456-7890-...` → normalize to raw ID (remove dashes)
+     - Raw ID: `abc123def456` → use as-is
+   - Determine output path:
+     - If user provided a path, use it
+     - Otherwise: will use current directory + page-title.md (CLI will determine exact name)
+   - Get NOTION_API_KEY from environment or MCP config
 
-2. **Fetch page from Notion:**
-   - Use `mcp__notion__notion-fetch` with the page ID
-   - Get the page content in Notion-flavored Markdown
-
-3. **Process the content:**
-   - Extract page title from the fetched content
-   - Detect if content has rich blocks (toggles, callouts, tables, columns, synced blocks, meeting notes)
-   - Check for patterns: `<details`, `<callout`, `<table`, `<columns`, `<synced_block`, `<meeting-notes`
-
-4. **Check for existing sync:**
-   - Load manifest from `~/.notion-sync/manifest.json`
-   - Check if this page ID is already synced to a different file path
-   - If yes, warn the user and ask if they want to:
-     - Update the existing file location
-     - Create a new copy at the requested location
-     - Cancel
-
-5. **Create frontmatter:**
-
-   ```yaml
-   ---
-   notion_id: <page_id>
-   notion_parent: <parent_page_name_if_available>
-   title: <page_title>
-   has_rich_blocks: <true|false>
-   notion_blocks: .notion-sync/blocks/<page_id>.json
-   last_synced: <ISO timestamp>
-   ---
+2. **Call Python CLI** (fast execution via Bash tool):
+   ```bash
+   python3 ~/os/notion-sync/bin/notion-sync pull <page-id> <output-path> \
+     --notion-token "$NOTION_API_KEY"
    ```
 
-6. **Save rich block data (if applicable):**
-   - If `has_rich_blocks` is true, save raw block data to `~/.notion-sync/blocks/<page_id>.json`
-   - This preserves the original structure for round-trip syncing
+   The CLI outputs JSON with one of these structures:
 
-7. **Write local markdown file:**
-   - Combine frontmatter + content
-   - Write to the output path
-   - Ensure parent directories exist
-
-8. **Update manifest:**
-   - Read `~/.notion-sync/manifest.json`
-   - Add/update entry:
-
-     ```json
-     {
-       "files": {
-         "<output_path>": {
-           "notion_id": "<page_id>",
-           "last_synced": "<ISO timestamp>",
-           "local_hash": "<sha256 of content>",
-           "notion_hash": "<sha256 of notion content>",
-           "notion_hash_at_sync": "<sha256 of notion content>"
-         }
-       }
+   **Success:**
+   ```json
+   {
+     "success": true,
+     "operation": "pull",
+     "file_path": "/absolute/path/to/file.md",
+     "notion_id": "abc123def456",
+     "title": "Page Title",
+     "metadata": {
+       "has_rich_blocks": true,
+       "block_count": 42,
+       "last_edited": "2026-03-28T10:30:00.000Z"
      }
+   }
+   ```
+
+   **Error:**
+   ```json
+   {
+     "error": "Error message",
+     "type": "ErrorType",
+     "status_code": 404
+   }
+   ```
+
+3. **Parse JSON response using LLM** (error handling and decision making):
+
+   **If error occurred:**
+
+   - **AlreadySyncedError** with existing path:
+     ```
+     This page is already synced to {existing_path}.
+
+     What would you like to do?
+     1. Update that file instead
+     2. Pull to new location (creates duplicate)
+     3. Cancel
+     ```
+     Wait for user choice and act accordingly.
+
+   - **NotionAPIError** with status 404:
+     ```
+     Page not found. Make sure:
+     - The page ID is correct
+     - The page is shared with the Notion integration
+     - You have access to the workspace
      ```
 
-   - Use Node.js to compute SHA-256 hashes:
-
-     ```bash
-     echo -n "content" | openssl dgst -sha256 -binary | xxd -p -c 256
+   - **AuthenticationError**:
+     ```
+     Notion API token not found. Please set NOTION_API_KEY environment variable
+     or configure the Notion MCP server.
      ```
 
-9. **Confirm:**
-   - Show file path created/updated
-   - Show whether rich blocks were detected
-   - Remind: Edit locally, then use `/push-notion <file>` to push changes back
+   - **Other errors**:
+     ```
+     Failed to pull page: {error message}
+
+     {Provide helpful suggestion based on error type}
+     ```
+
+   **If success:**
+   - Extract metadata from response
+   - Proceed to confirmation step
+
+4. **Confirm to user using LLM** (natural language output):
+   ```
+   Successfully pulled "{title}" to {file_path}
+
+   {if has_rich_blocks}
+   Note: This page contains rich blocks (toggles, callouts, tables, etc.).
+   They're preserved as special syntax and will sync back correctly.
+   {endif}
+
+   Next steps:
+   - Edit the markdown file locally
+   - When ready: /push-notion {file_path}
+   - Check status: /notion-status {file_path}
+   ```
 
 ## Important notes
 
-- If the page has rich Notion blocks (toggles, callouts, etc.), they'll be preserved in Notion-flavored Markdown
-- Most rich blocks are editable as-is (XML-like syntax)
-- For complex edits to rich blocks, suggest creating subpages
-- Always update the manifest to track sync state
-- Compute content hashes for conflict detection
+- **Python CLI handles**: API calls, file I/O, hashing, manifest updates, conflict detection
+- **LLM handles**: Natural language parsing, error explanation, user interaction, decision making
+- **Performance**: ~1-2 seconds (vs 3-4 seconds with pure LLM/MCP approach)
+- **Cost**: ~$0.01 per operation (vs ~$0.05 with MCP tools)
+- **Notion token**: Retrieved from environment variable or MCP config
+- **Working directory**: CLI accepts both absolute and relative paths
 
 ## Example usage
 
 ```bash
 /pull-notion https://notion.so/workspace/Page-abc123
 /pull-notion abc123def456 docs/api-reference.md
+/pull-notion https://notion.so/My-Page-Title-abc123def456789 ~/projects/docs/page.md
 ```
